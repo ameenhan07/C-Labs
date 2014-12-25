@@ -1,0 +1,20 @@
+drop procedure myp()//
+create procedure myp()
+begin
+	declare f int default 1;
+	declare str1 varchar(50)default "";
+	declare str2 varchar(50) default  "";
+	declare cn cursor for select name from employee11;
+	declare continue handler for not found set f=0;
+	open cn;
+	myloop: loop
+		fetch cn into str1;
+	if f=0
+	then
+		leave myloop;
+	end if;
+	set str2=concat(str2,str1);
+	end loop myloop;
+	close cn;
+	select str2;
+end

@@ -1,0 +1,42 @@
+drop procedure pogpog;
+create procedure pogpog()
+begin
+	declare f int default 1;
+	declare i int default 0;
+	declare v1 varchar(6);
+	declare v2 int;
+	declare v3 varchar(20);
+	declare v4 varchar(20);
+	declare v5 int;
+	declare v6 varchar(20);
+	declare v7 varchar(20);
+	declare v8 timestamp;
+	declare cn cursor for select operation, pbid, pbname, pauthname, nbid, nbname, nauthname, timeofop from log1205 where timeofop in (select max(timeofop) from log1205);	
+	open cn;
+	fetch cn into v1,v2,v3,v4,v5,v6,v7,v8;
+	
+	if v1="insert"
+	then
+		delete from book1205 where bid = v5;
+	end if;
+	if v1="update"
+	then
+		update book1205 set bid= v2, bname= v3, authrname = v4 where bid= v5;
+	end if;
+	if v1="delete"
+	then
+		insert into book1205 values(v2,v3,v4);
+	end if;
+	close cn;
+	declare cn2 cursor for select timeofop from log1205 order by timeofop desc limit 0,2;
+	open cn2;
+	myloop: loop
+	fetch cn2 into v8;
+	if f=0
+	then
+		leave myloop;
+	end if;
+	delete from log1205 where timeofop = v8;
+	end loop myloop;
+	close cn2;	
+end

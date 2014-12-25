@@ -1,0 +1,89 @@
+	
+
+1.//Basic cursor
+drop procedure myp8/
+create procedure myp8()
+begin
+	declare str varchar(20)default "";
+	declare str1 varchar(90) default "";
+	declare str2 varchar(90) default "";
+	declare flag int default 1;
+	declare cn cursor for select bname,authname from books11;
+	declare continue handler for NOT FOUND set flag=0;
+	open cn;
+myloop: loop
+	fetch cn into str,str2;
+	set str1=concat(str1,str);
+	set str2=concat(str2,str1);
+	if flag=0
+	then
+		leave myloop;
+	end if;			
+	end loop myloop;
+	select str2;
+	close cn;
+end/
+
+---------------------------------------------------------------------
+
+create procedure myp9()
+begin
+	declare str varchar(20) default "";
+	declare str1 varchar(90) default "";
+	declare flag int default 1;
+	declare cn cursor for select distinct(city)from employee;
+	declare continue handler for NOT FOUND set flag=0;
+	open cn;
+myloop: loop
+	fetch cn into str;
+	if flag=0
+	then
+	leave myloop;
+	else
+	set str1=concat(str1,str);
+	end if;		
+	end loop;
+	select str1;
+	close cn;
+	
+end/
+
+--------------------------------------------------------------------------
+
+2.//Alter the last operation
+
+drop procedure backtrack7/
+create procedure backtrack7()
+begin
+	declare usr varchar(20) default "";
+	declare str varchar(20) default "";
+	declare pid int;
+	declare pname varchar(20) default "";
+	declare paname varchar(20) default "";
+	declare nid int;
+	declare nname varchar(20) default "";
+	declare naname varchar(20) default "";
+	declare tim timestamp;
+	declare flag int default 1;
+	declare cn cursor for select * from logger11;
+	declare continue handler for NOT FOUND set flag=0;
+	open cn;
+myloop: loop
+	fetch cn into usr,str,pid,pname,paname,nid,nname,naname,tim;
+	if flag=0
+	then 
+		leave myloop;
+	end if;
+end loop myloop;
+	
+	if str="insert"
+	then
+		delete from books11 where bid=nid and bname=nname and authname=naname;
+	elseif str="update"
+	then
+		update books11 set bid=pid,bname=pname,authname=paname where bid=nid and bname=nname and authname=naname;
+	else
+		 insert into books11  values(pid,pname,paname);
+	end if;
+	close cn;
+end// 

@@ -1,0 +1,25 @@
+drop procedure myp1()//
+create procedure myp1()
+begin
+declare str1 varchar(50) default " ";
+declare str2 varchar(500) default " ";
+declare flag int default 1;
+declare cn cursor for select distinct(city) from employee11;
+declare continue handler for NOT FOUND set flag=0;
+open cn;
+myloop:loop
+	fetch cn into str1;
+	
+	if(flag=0)
+	then
+		leave myloop;
+	else
+		set str2=concat(str2,",",str1);
+		iterate myloop;
+	end if;
+end loop;
+select str2;
+close cn;
+end//
+
+call myp1()//
